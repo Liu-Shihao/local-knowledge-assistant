@@ -45,11 +45,15 @@ def search():
 
     if extract_hyperlink.is_hyperlink(prompt) or extract_hyperlink.contains_hyperlink(prompt):
         hyperlinks = extract_hyperlink.extract_hyperlinks(prompt)
-        web_qa_chat.insert(hyperlinks)
-        return jsonify({'msg': 'Load complete, Please Ask!'})
+        # 插入Web页面内容
+        web_qa_chat.insertWebContent(hyperlinks)
+        return jsonify({'msg': 'Load complete, Please Ask.'})
     else:
         answer = web_qa_chat.ask(prompt)
-        return jsonify({'answer': answer})
+        return jsonify({'question': answer['question'],
+                        'answer': answer['answer'],
+                        'sources': answer['context'][0].metadata['source']
+                        })
 
     if 'file' in request.files:
         file = request.files['file']

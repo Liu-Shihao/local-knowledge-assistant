@@ -13,4 +13,13 @@ Image图像
 # Setup
 
 ## Ollama
+### ModelDownload
+```shell
+
+ollama run llama2
+
+ollama run mistral
+
+ollama run llava
+```
 
