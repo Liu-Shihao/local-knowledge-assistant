@@ -65,18 +65,18 @@ def search():
             return jsonify({'error': 'Invalid file'})
 
 # 在应用上下文销毁时保存向量数据库到本地
-@app.teardown_appcontext
-def save_database_on_shutdown(exception=None):
-    web_qa_chat.db.save_local("faiss_index")
-    print("Vector database saved to local file")
-
-# 注册服务终止时执行的方法
-def save_database_on_exit():
-    web_qa_chat.db.save_local("faiss_index")
-    print("Vector database saved to local file")
-
-# 在程序终止时执行
-atexit.register(save_database_on_exit)
+# @app.teardown_appcontext
+# def save_database_on_shutdown(exception=None):
+#     web_qa_chat.db.save_local("faiss_index")
+#     print("Vector database saved to local file")
+#
+# # 注册服务终止时执行的方法
+# def save_database_on_exit():
+#     web_qa_chat.db.save_local("faiss_index")
+#     print("Vector database saved to local file")
+#
+# # 在程序终止时执行
+# atexit.register(save_database_on_exit)
 
 if __name__ == '__main__':
     app.run(debug=True,
