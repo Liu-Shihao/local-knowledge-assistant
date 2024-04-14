@@ -71,3 +71,5 @@ curl http://localhost:11434/api/chat -d '{
   ]
 }'
 ```
+
+国内魔塔Ollama Model地址：[https://modelscope.cn/models/liush99/ollama_models/files](https://modelscope.cn/models/liush99/ollama_models/files)
