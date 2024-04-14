@@ -1,17 +1,15 @@
-import atexit
 import os
 
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 
-from src.qa_rag import web_qa_chat
-
+from src.llms.llms import ask, insert
 from src.utils import extract_hyperlink
 
 app = Flask(__name__)
 
 # 保存图片的文件夹路径
-UPLOAD_FOLDER = './uploads'
+UPLOAD_FOLDER = 'data/uploads'
 # 允许上传的图片文件类型
 ALLOWED_IMG_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
@@ -36,20 +34,19 @@ def save_disk(file):
     print(file.filename,"File saved successfully")
 
 
-
 # 定义搜索的路由
 @app.route('/search', methods=['GET'])
 def search():
 
-    prompt = request.form.get('q', '')
+    q = request.form.get('q', '')
 
-    if extract_hyperlink.is_hyperlink(prompt) or extract_hyperlink.contains_hyperlink(prompt):
-        hyperlinks = extract_hyperlink.extract_hyperlinks(prompt)
+    if extract_hyperlink.is_hyperlink(q) or extract_hyperlink.contains_hyperlink(q):
+        hyperlinks = extract_hyperlink.extract_hyperlinks(q)
         # 插入Web页面内容
-        web_qa_chat.insertWebContent(hyperlinks)
+        insert(hyperlinks,"url")
         return jsonify({'msg': 'Load complete, Please Ask.'})
     else:
-        answer = web_qa_chat.ask(prompt)
+        answer = ask(q)
         return jsonify({'question': answer['question'],
                         'answer': answer['answer'],
                         'sources': answer['context'][0].metadata['source']
@@ -67,20 +64,6 @@ def search():
             return jsonify({'msg': 'File saved and search request received successfully'})
         else:
             return jsonify({'error': 'Invalid file'})
-
-# 在应用上下文销毁时保存向量数据库到本地
-# @app.teardown_appcontext
-# def save_database_on_shutdown(exception=None):
-#     web_qa_chat.db.save_local("faiss_index")
-#     print("Vector database saved to local file")
-#
-# # 注册服务终止时执行的方法
-# def save_database_on_exit():
-#     web_qa_chat.db.save_local("faiss_index")
-#     print("Vector database saved to local file")
-#
-# # 在程序终止时执行
-# atexit.register(save_database_on_exit)
 
 if __name__ == '__main__':
     app.run(debug=True,

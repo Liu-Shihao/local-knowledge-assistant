@@ -8,3 +8,5 @@ rapidocr-onnxruntime==1.3.16
 jq==1.7.0
 unstructured==0.13.2
 Markdown==3.6
+llama-index
+Ollama
