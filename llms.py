@@ -21,8 +21,9 @@ text_splitter = RecursiveCharacterTextSplitter(
     )
 
 embeddings = OllamaEmbeddings(model="mistral")
-chatbot = ChatOllama(model="mistral")
-llm = Ollama(model="mistral")
+mistral_chatbot = ChatOllama(model="mistral")
+mistral_llm = Ollama(model="mistral")
+llava_llm = Ollama(model="llava")
 # template = hub.pull("rlm/rag-prompt")
 # print(type(template))
 # print(template)
@@ -69,7 +70,7 @@ def chat(content):
             MessagesPlaceholder(variable_name="messages"),
         ]
     )
-    chain = prompt | chatbot
+    chain = prompt | mistral_chatbot
     answer = chain.invoke(
         {
             "messages": [
@@ -107,7 +108,7 @@ def ask(q):
     rag_chain_from_docs = (
             RunnablePassthrough.assign(context=(lambda x: format_docs(x["context"])))
             | chat_template
-            | llm
+            | mistral_llm
             | StrOutputParser()
     )
 
