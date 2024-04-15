@@ -10,7 +10,7 @@ from langchain_community.llms.ollama import Ollama
 from langchain_community.vectorstores.faiss import FAISS
 from langchain_core.messages import HumanMessage
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, HumanMessagePromptTemplate, PromptTemplate
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.runnables import RunnableParallel
 from langchain_core.runnables import RunnablePassthrough
@@ -23,7 +23,25 @@ text_splitter = RecursiveCharacterTextSplitter(
 embeddings = OllamaEmbeddings(model="mistral")
 chatbot = ChatOllama(model="mistral")
 llm = Ollama(model="mistral")
-template = hub.pull("rlm/rag-prompt")
+# template = hub.pull("rlm/rag-prompt")
+# print(type(template))
+# print(template)
+
+TEMPLATE = """
+You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use three sentences maximum and keep the answer concise.
+Question: {question} 
+Context: {context} 
+Answer:
+"""
+
+human_message_template = HumanMessagePromptTemplate.from_template(TEMPLATE)
+
+chat_template = ChatPromptTemplate.from_messages(
+    messages=[
+        human_message_template
+    ]
+)
+
 faiss_folder_path: str = "data/faiss_index"
 local_data_folder_path: str = "data/example_data"
 
@@ -88,7 +106,7 @@ def ask(q):
 
     rag_chain_from_docs = (
             RunnablePassthrough.assign(context=(lambda x: format_docs(x["context"])))
-            | template
+            | chat_template
             | llm
             | StrOutputParser()
     )
