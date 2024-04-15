@@ -1,12 +1,11 @@
 import os
 
 from flask import Flask, request, jsonify
-from langchain_community.chat_models.ollama import ChatOllama
 from werkzeug.utils import secure_filename
 
-from src.llms import llms
-from src.llms.llms import ask, insert
-from src.utils import extract_hyperlink
+import llms
+from llms import insert
+from src import extract_hyperlink
 
 app = Flask(__name__)
 

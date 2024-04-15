@@ -1,4 +1,4 @@
-from src.utils import extract_hyperlink
+from src import extract_hyperlink
 
 # 测试示例
 text_with_hyperlink = 'Check out this link: https://python.langchain.com/docs/use_cases/question_answering/quickstart/'
