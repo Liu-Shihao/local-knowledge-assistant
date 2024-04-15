@@ -1,8 +1,10 @@
 import os
 
 from flask import Flask, request, jsonify
+from langchain_community.chat_models.ollama import ChatOllama
 from werkzeug.utils import secure_filename
 
+from src.llms import llms
 from src.llms.llms import ask, insert
 from src.utils import extract_hyperlink
 
@@ -33,10 +35,21 @@ def save_disk(file):
     file.save(image_path)
     print(file.filename,"File saved successfully")
 
+# TODO 加入上下文、对话历史
+@app.route('/chat', methods=['GET'])
+def chat():
+    question = request.form.get('q', '')
+
+    answer = llms.chat(question)
+    print("question:",question)
+    print("answer:", answer)
+
+    return jsonify({'question': question,
+                    'answer': answer.content})
 
 # 定义搜索的路由
-@app.route('/search', methods=['GET'])
-def search():
+@app.route('/ask', methods=['GET'])
+def ask():
 
     q = request.form.get('q', '')
 
@@ -46,7 +59,7 @@ def search():
         insert(hyperlinks,"url")
         return jsonify({'msg': 'Load complete, Please Ask.'})
     else:
-        answer = ask(q)
+        answer = llms.ask(q)
         return jsonify({'question': answer['question'],
                         'answer': answer['answer'],
                         'sources': answer['context'][0].metadata['source']

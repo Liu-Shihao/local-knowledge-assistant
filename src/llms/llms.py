@@ -8,7 +8,9 @@ from langchain_community.document_loaders.web_base import WebBaseLoader
 from langchain_community.embeddings.ollama import OllamaEmbeddings
 from langchain_community.llms.ollama import Ollama
 from langchain_community.vectorstores.faiss import FAISS
+from langchain_core.messages import HumanMessage
 from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.runnables import RunnableParallel
 from langchain_core.runnables import RunnablePassthrough
@@ -37,6 +39,27 @@ else:
     db.save_local(faiss_folder_path)
 
 retriever = db.as_retriever(search_type="similarity", search_kwargs={"k": 5})
+
+# https://python.langchain.com/docs/use_cases/chatbots/quickstart/#prompt-templates
+def chat(content):
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                "You are a helpful assistant. Answer all questions to the best of your ability.",
+            ),
+            MessagesPlaceholder(variable_name="messages"),
+        ]
+    )
+    chain = prompt | chatbot
+    answer = chain.invoke(
+        {
+            "messages": [
+                HumanMessage(content=content),
+            ],
+        }
+    )
+    return answer
 
 
 
