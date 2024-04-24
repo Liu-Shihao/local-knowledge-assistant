@@ -9,3 +9,5 @@ jq==1.7.0
 unstructured==0.13.2
 Markdown==3.6
 IPython
+neo4j
+langchain-experimental
