@@ -18,9 +18,12 @@ https://neo4j.com/docs/operations-manual/current/installation/
 
 
 graph = Neo4jGraph()
-Ollama(model="llama3")
-llm = ChatOpenAI(temperature=0, model_name="gpt-4-0125-preview")
-llm = ChatOllama(model="llama3")
+# llm = Ollama(model="llama3")
+# llm = ChatOpenAI(temperature=0, model_name="gpt-4-0125-preview")
+# llm = ChatOllama(model="llama3")
+llm = ChatOllama(model="llama2")
+# llm = ChatOpenAI(model="gpt-3.5-turbo-0125", temperature=0)
+
 
 llm_transformer = LLMGraphTransformer(llm=llm)
 
