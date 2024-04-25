@@ -11,3 +11,5 @@ Markdown==3.6
 IPython
 neo4j
 langchain-experimental
+torch
+transformers
